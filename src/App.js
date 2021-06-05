@@ -19,6 +19,13 @@ function App() {
   // After four pomodoros, take a longer break (15–30 minutes), reset your checkmark count to zero, then go to step 1.
 
   useEffect(() => {
+    const breakDurationSequence = [
+      SHORT_BREAK,
+      SHORT_BREAK,
+      SHORT_BREAK,
+      LONG_BREAK,
+    ]
+
     const runTimer = () => {
       setTimeout(() => {
         setTimer(timer - 1)
@@ -29,18 +36,15 @@ function App() {
           if (runCount % 2 !== 0) {
             setRunCount(runCount + 1)
             setTimer(STARTING_SECONDS)
-          } else if (runCount < 8 && runCount % 2 === 0) {
-            setRunCount(runCount + 1)
-            setTimer(SHORT_BREAK)
-          } else if (runCount === 8) {
-            setRunCount(runCount + 1)
-            setTimer(LONG_BREAK)
           } else if (runCount === 9) {
             setTimer(STARTING_SECONDS)
             setRunCount(0)
+          } else {
+            setRunCount(runCount + 1)
+            setTimer(breakDurationSequence[Math.floor(runCount / 2)])
           }
         }
-      }, 15)
+      }, 1000)
     }
 
     if (isStarted) {
@@ -50,7 +54,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Pomodoro</h1>
+      <h1>Pomodoro has ran {runCount}</h1>
       <div className="timer" data-testid="timer">
         <ClockFace timeInSeconds={timer} />
       </div>

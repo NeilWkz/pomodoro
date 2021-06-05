@@ -1,8 +1,7 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import App from './App';
-
+import App from './App'
 
 // Fake timers using Jest
 beforeEach(() => {
@@ -16,32 +15,87 @@ afterEach(() => {
 })
 
 test('there is a heading', () => {
-  render(<App />);
+  render(<App />)
   expect(screen.getByRole('heading')).toBeTruthy()
-
-});
+})
 
 test('there is a start button, when clicked it becomes a pause button', () => {
-  render(<App />);
-  const startPause = screen.getByRole('button', {label: /Start/i})
+  render(<App />)
+  const startPause = screen.getByRole('button', { label: /Start/i })
   expect(startPause).toBeTruthy()
   userEvent.click(startPause)
-  expect(screen.getByRole('button', {label: /Pause/i})).toBeTruthy()
 
-});
+  act(()=> jest.runAllTimers())
+  expect(screen.getByRole('button', { label: /Pause/i })).toBeInTheDocument()
+})
 
 test('there is a timer, it starts from 25:00', () => {
-  render(<App />);
+  render(<App />)
   expect(screen.getByTestId('timer')).toBeTruthy()
   expect(screen.getByText(/25:00/i)).toBeTruthy()
-});
+})
 
-test('The first increment lasts', () => {
-  render(<App />);
-  const startPause = screen.getByRole('button', {label: /Start/i})
+test('The second timer starts at 5:00', async () => {
+  render(<App />)
+  const startPause = screen.getByRole('button', { label: /Start/i })
+
   userEvent.click(startPause)
+  act(()=> jest.runAllTimers())
 
 
-});
+
+  await waitFor(() => expect(screen.getByText(/5:00/i)).toBeTruthy())
+})
+
+test('The third timer starts at 25:00', async () => {
+  render(<App />)
+  const startPause = screen.getByRole('button', { label: /Start/i })
+
+  userEvent.click(startPause)
+  act(()=> jest.runAllTimers())
+
+  await screen.findByText(/5:00/i)
+
+  userEvent.click(startPause)
+  act(()=> jest.runAllTimers())
 
 
+  await waitFor(() => expect(screen.getByText(/25:00/i)).toBeTruthy())
+
+
+})
+
+test('The seventh timer starts at 15:00', async () => {
+  render(<App />)
+  const startPause = screen.getByRole('button', { label: /Start/i })
+
+  userEvent.click(startPause)
+  act(()=> jest.runAllTimers())
+
+  await screen.findByText(/5:00/i)
+  userEvent.click(startPause)
+  act(()=> jest.runAllTimers())
+
+  await screen.findByText(/25:00/i)
+  userEvent.click(startPause)
+  act(()=> jest.runAllTimers())
+
+  await screen.findByText(/5:00/i)
+  userEvent.click(startPause)
+  act(()=> jest.runAllTimers())
+
+  await screen.findByText(/25:00/i)
+  userEvent.click(startPause)
+  act(()=> jest.runAllTimers())
+
+  await screen.findByText(/5:00/i)
+  userEvent.click(startPause)
+  act(()=> jest.runAllTimers())
+
+  await screen.findByText(/25:00/i)
+  userEvent.click(startPause)
+  act(()=> jest.runAllTimers())
+
+
+  await waitFor(() => expect(screen.getByText(/15:00/i)).toBeTruthy())
+})

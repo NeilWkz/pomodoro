@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react'
 import './App.css'
 import ClockFace from './components/ClockFace'
 
-const STARTING_SECONDS = 1500
-const SHORT_BREAK = 300
-const LONG_BREAK = 900
+export const WORK_DURATION = 1500
+export const SHORT_BREAK = 300
+export const LONG_BREAK = 900
 
 function App() {
-  const [timer, setTimer] = useState(STARTING_SECONDS)
+  const [timer, setTimer] = useState(WORK_DURATION)
   const [isStarted, setIsStarted] = useState(false)
   const [runCount, setRunCount] = useState(0)
 
@@ -29,7 +29,7 @@ function App() {
           // check if number is odd
           if (runCount % 2 !== 0) {
             setRunCount(runCount + 1)
-            setTimer(STARTING_SECONDS)
+            setTimer(WORK_DURATION)
           } else if (runCount < 8 && runCount % 2 === 0) {
             setRunCount(runCount + 1)
             setTimer(SHORT_BREAK)
@@ -37,11 +37,11 @@ function App() {
             setRunCount(runCount + 1)
             setTimer(LONG_BREAK)
           } else if (runCount === 9) {
-            setTimer(STARTING_SECONDS)
+            setTimer(WORK_DURATION)
             setRunCount(0)
           }
         }
-      }, 15)
+      }, 1000)
     }
 
     if (isStarted) {
