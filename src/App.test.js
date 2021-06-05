@@ -14,6 +14,12 @@ afterEach(() => {
   jest.useRealTimers()
 })
 
+const runTimer = (screenFn) => {
+  const startPause = screenFn.getByRole('button', { label: /Start/i })
+  userEvent.click(startPause)
+  act(() => jest.runAllTimers())
+}
+
 test('there is a heading', () => {
   render(<App />)
   expect(screen.getByRole('heading')).toBeTruthy()
@@ -23,9 +29,9 @@ test('there is a start button, when clicked it becomes a pause button', () => {
   render(<App />)
   const startPause = screen.getByRole('button', { label: /Start/i })
   expect(startPause).toBeTruthy()
-  userEvent.click(startPause)
 
-  act(()=> jest.runAllTimers())
+  runTimer(screen)
+
   expect(screen.getByRole('button', { label: /Pause/i })).toBeInTheDocument()
 })
 
@@ -37,65 +43,43 @@ test('there is a timer, it starts from 25:00', () => {
 
 test('The second timer starts at 5:00', async () => {
   render(<App />)
-  const startPause = screen.getByRole('button', { label: /Start/i })
-
-  userEvent.click(startPause)
-  act(()=> jest.runAllTimers())
-
-
+  runTimer(screen)
 
   await waitFor(() => expect(screen.getByText(/5:00/i)).toBeTruthy())
 })
 
 test('The third timer starts at 25:00', async () => {
   render(<App />)
-  const startPause = screen.getByRole('button', { label: /Start/i })
-
-  userEvent.click(startPause)
-  act(()=> jest.runAllTimers())
-
+  runTimer(screen)
   await screen.findByText(/5:00/i)
 
-  userEvent.click(startPause)
-  act(()=> jest.runAllTimers())
-
+  runTimer(screen)
 
   await waitFor(() => expect(screen.getByText(/25:00/i)).toBeTruthy())
-
-
 })
 
 test('The seventh timer starts at 15:00', async () => {
   render(<App />)
-  const startPause = screen.getByRole('button', { label: /Start/i })
 
-  userEvent.click(startPause)
-  act(()=> jest.runAllTimers())
+  runTimer(screen)
 
   await screen.findByText(/5:00/i)
-  userEvent.click(startPause)
-  act(()=> jest.runAllTimers())
+  runTimer(screen)
 
   await screen.findByText(/25:00/i)
-  userEvent.click(startPause)
-  act(()=> jest.runAllTimers())
+  runTimer(screen)
 
   await screen.findByText(/5:00/i)
-  userEvent.click(startPause)
-  act(()=> jest.runAllTimers())
+  runTimer(screen)
 
   await screen.findByText(/25:00/i)
-  userEvent.click(startPause)
-  act(()=> jest.runAllTimers())
+  runTimer(screen)
 
   await screen.findByText(/5:00/i)
-  userEvent.click(startPause)
-  act(()=> jest.runAllTimers())
+  runTimer(screen)
 
   await screen.findByText(/25:00/i)
-  userEvent.click(startPause)
-  act(()=> jest.runAllTimers())
-
+  runTimer(screen)
 
   await waitFor(() => expect(screen.getByText(/15:00/i)).toBeTruthy())
 })
