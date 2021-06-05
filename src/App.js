@@ -54,7 +54,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Pomodoro has ran {runCount}</h1>
+      <h1>Pomodoro</h1>
       <div className="timer" data-testid="timer">
         <ClockFace timeInSeconds={timer} />
       </div>
