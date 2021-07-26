@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { Temporal } from 'proposal-temporal/lib/index.mjs'
+import { Temporal } from '@js-temporal/polyfill/lib/index.mjs';
 import './App.css'
 import ClockFace from './components/ClockFace'
+import ProgressIndicator from './components/ProgressIndicator'
 
 const STARTING_SECONDS = 1500
 const SHORT_BREAK = 300
@@ -14,12 +15,11 @@ const breakDurationSequence = [
   LONG_BREAK,
 ]
 
-
 function App() {
   const [timer, setTimer] = useState(STARTING_SECONDS)
   const [maxTime, setMaxTime] = useState(STARTING_SECONDS)
   const [startingTime, setStartingTime] = useState(undefined)
-  const [isStarted, setIsStarted] = useState(false)
+  const [isRunning, setIsRunning] = useState(false)
   const [runCount, setRunCount] = useState(0)
 
   // Decide on the task to be done.
@@ -32,7 +32,6 @@ function App() {
   const resetTick = useCallback(() => {
     setStartingTime(Temporal.now.instant())
   }, [setStartingTime])
-
 
   const setTimerLength = useCallback(() => {
     // check if number is odd
@@ -72,7 +71,7 @@ function App() {
       if (startingTime) {
         const time = getElapsedTime()
 
-       const shouldAdvance =  timer - 1 === time
+        const shouldAdvance = timer - 1 === time
 
         if (shouldAdvance) {
           setTimer(timer - 1)
@@ -87,20 +86,22 @@ function App() {
   }, [startingTime, resetTick, timer, maxTime, setTimerLength])
 
   useEffect(() => {
-    if (isStarted) {
+    if (isRunning) {
       runTimer()
     }
-  }, [runTimer, isStarted])
+  }, [runTimer, isRunning])
 
   return (
     <div className="App">
-      <h1>Pomodoro</h1>
+      <h1><span className="emoji">🍅</span>Pomodoro<span className="emoji">⏳</span></h1>
       <div className="timer" data-testid="timer">
-        <ClockFace timeInSeconds={timer} />
+        <ProgressIndicator maxTime={maxTime} timerRunning={isRunning}>
+          <ClockFace timeInSeconds={timer} />
+          <button className="play-pause-btn" onClick={() => setIsRunning(!isRunning)}>
+            {isRunning ? 'Pause' : 'Start'}
+          </button>
+        </ProgressIndicator>
       </div>
-      <button onClick={() => setIsStarted(!isStarted)}>
-        {isStarted ? 'Pause' : 'Start'}
-      </button>
     </div>
   )
 }
