@@ -17,7 +17,7 @@ afterEach(() => {
 const runTimer = (screenFn) => {
   const startPause = screenFn.getByRole('button', { label: /Start/i })
   userEvent.click(startPause)
-  act(() => jest.runAllTimers())
+  act(() => jest.runOnlyPendingTimers() )
 }
 
 test('there is a heading', () => {
