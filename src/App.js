@@ -21,6 +21,7 @@ function App() {
   const [startingTime, setStartingTime] = useState(undefined)
   const [isRunning, setIsRunning] = useState(false)
   const [runCount, setRunCount] = useState(0)
+  const [isPaused, setIsPaused] = useState(false)
 
   // Decide on the task to be done.
   // Set the pomodoro timer (traditionally to 25 minutes).[1]
@@ -32,6 +33,27 @@ function App() {
   const resetTick = useCallback(() => {
     setStartingTime(Temporal.now.instant())
   }, [setStartingTime])
+
+  const playPauseHandler = useCallback(() => {
+    console.log("pp handler")
+    if (!isRunning && !isPaused) {
+      setIsRunning(!isRunning)
+    }
+    if (isRunning && !isPaused) {
+      setIsPaused(!isPaused)
+      setIsRunning(!isRunning)
+    }
+
+    if (!isRunning && isPaused) {
+      // restart the paused clock
+      console.log("restart paused")
+      setIsRunning(!isRunning)
+      setIsPaused(!isPaused)
+      resetTick()
+
+    }
+  }, [isPaused, isRunning])
+
 
   const setTimerLength = useCallback(() => {
     // check if number is odd
@@ -97,7 +119,7 @@ function App() {
       <div className="timer" data-testid="timer">
         <ProgressIndicator maxTime={maxTime} timerRunning={isRunning}>
           <ClockFace timeInSeconds={timer} />
-          <button className="play-pause-btn" onClick={() => setIsRunning(!isRunning)}>
+          <button className="play-pause-btn" onClick={() => playPauseHandler()}>
             {isRunning ? 'Pause' : 'Start'}
           </button>
         </ProgressIndicator>
